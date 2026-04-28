@@ -1,0 +1,45 @@
+---
+title: "Your Project Title Goes Here"
+subtitle: "Final Project Report"
+author: "Your Name Goes Here"
+date: today
+format: pdf
+editor: visual
+---
+
+```{r}
+#| include: false #this is the only chunk you can "hide" in any way
+
+library(kableExtra)
+library(tidyverse)
+
+# add other packages here
+```
+
+# Introduction 
+
+<!--  What is this about? - Do not assume your readers have any specific knowledge of your subject matter! For example, if your project involves phylogenetic trees, you should assume your audience has only a very simple understanding of genetics. -->
+
+<!-- Why should anyone care about this? Share your motivations. You may reference external sources (properly cited) to help motivate the topic. -->
+
+# Data
+
+<!-- What are the data? - What was the source of the data (who collected it, when, in what way, and why)? Provide appropriate citation. What kind of data was it? Is there a link to the data or some other way for the reader to follow up on your work? You need to reference your wrangling file here if you used one, in addition to providing these details. -->
+
+# Methods
+
+<!-- What methods did you use? In what way did you *go beyond*? - What new method/analysis, etc. did you explore? You will need to describe the way in which you *went beyond*. This should include references to new R packages for analysis, citations of textbooks, blogs, or external sources, etc. You don't need to give us a major expository review of your *beyond* topic (no derivations, proofs, or anything of the sort), but give the reader a sense of it (what is it and where would they use it), and references for where they could go explore it more. -->
+
+# Results / Discussion
+
+<!-- What are your findings? - What kind of statistical computations (if any) have you done to support those conclusions? (Again, even if you display code showing how some of the calculations were performed, it is up to you to interpret, in simple terms, the results of these calculations.) Do not forget about units, axis labels, graph titles, etc. -->
+
+# Conclusion
+
+
+<!-- Summarize what you found. Then, what are the limitations of your work? - Be clear so that others do not misinterpret your findings. To what population do your results apply? Do they generalize? Could your work be extended with more data or computational power or time to analyze? How could your study be improved? Suggesting plausible extensions doesn't weaken your work; it strengthens it by connecting it to future work. -->
+
+# References
+
+<!-- What are your references? - It's been mentioned above that you should be citing things. Thus, you should have a references (or bibliography) section, usually after the conclusion. The data sources must be listed here (and in your wrangling files too), as well as any external sources used. You could have sources for your chosen topic, such as a text analysis textbook. You should also cite any R packages that were not introduced in class materials. This doesn't replace in-line citation that should also be occurring when you use these references. For example, in the report, you could use (Author, Year) when pulling from a particular reference, and then be sure the complete reference is in the bibliography at the end. -->
+
