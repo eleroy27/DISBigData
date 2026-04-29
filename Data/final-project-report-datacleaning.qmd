@@ -12,11 +12,32 @@ editor: visual
 
 library(kableExtra)
 library(tidyverse)
+library(dplyr)
 
 # add other packages here
 ```
 
-# Introduction 
+# Introduction
+
+```{r}
+# Load in data from downloads for air quality data
+caliair <- read.csv("/Users/emmaleroy/Downloads/ cali2019airqual.csv")
+
+
+```
+
+```{r}
+# Average daily values over the year by census tract
+caliairavg <- caliair |> 
+  # aggregate by census tract
+  group_by(ctfips) |>
+  summarize(
+    # compute averages
+    DS_PM_pred_avg = mean(DS_PM_pred, na.rm = TRUE),
+    DS_PM_stdd_avg = mean(DS_PM_stdd, na.rm = TRUE)
+  )
+  
+```
 
 <!--  What is this about? - Do not assume your readers have any specific knowledge of your subject matter! For example, if your project involves phylogenetic trees, you should assume your audience has only a very simple understanding of genetics. -->
 
@@ -36,10 +57,8 @@ library(tidyverse)
 
 # Conclusion
 
-
 <!-- Summarize what you found. Then, what are the limitations of your work? - Be clear so that others do not misinterpret your findings. To what population do your results apply? Do they generalize? Could your work be extended with more data or computational power or time to analyze? How could your study be improved? Suggesting plausible extensions doesn't weaken your work; it strengthens it by connecting it to future work. -->
 
 # References
 
 <!-- What are your references? - It's been mentioned above that you should be citing things. Thus, you should have a references (or bibliography) section, usually after the conclusion. The data sources must be listed here (and in your wrangling files too), as well as any external sources used. You could have sources for your chosen topic, such as a text analysis textbook. You should also cite any R packages that were not introduced in class materials. This doesn't replace in-line citation that should also be occurring when you use these references. For example, in the report, you could use (Author, Year) when pulling from a particular reference, and then be sure the complete reference is in the bibliography at the end. -->
-
