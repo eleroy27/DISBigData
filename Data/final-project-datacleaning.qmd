@@ -1,0 +1,120 @@
+---
+title: "Final Project Data Preparation"
+author: "Emma LeRoy, Jessie Shen, Ryan Lee, Samantha Pincus"
+date: today
+format: pdf
+editor: visual
+---
+
+```{r}
+#| include: false #this is the only chunk you can "hide" in any way
+
+library(kableExtra)
+library(tidyverse)
+library(dplyr)
+install.packages("sf") 
+library(sf)
+install.packages("terra") 
+library(terra)
+install.packages("tidycensus")
+library(tidycensus)
+
+# add other packages here
+```
+
+# Data Uploads and Cleaning File
+
+```{r}
+# set census API key
+census_api_key("23682503e12634306836ad23e59c4d8ce6580b82", install = TRUE)
+
+```
+
+```{r}
+readRenviron("~/.Renviron")
+```
+
+```{r}
+# Load in data from downloads for air quality data
+caliair <- read.csv("/Users/emmaleroy/Downloads/ cali2019airqual.csv")
+
+
+```
+
+```{r}
+# Average daily values over the year by census tract
+caliairavg <- caliair |> 
+  # aggregate by census tract
+  group_by(ctfips) |>
+  summarize(
+    # compute averages
+    DS_PM_pred_avg = mean(DS_PM_pred, na.rm = TRUE),
+    DS_PM_stdd_avg = mean(DS_PM_stdd, na.rm = TRUE)
+  )
+  
+```
+
+```{r}
+# upload geodatabase
+
+# download gdb layer file as vector
+v <- vect("/Users/emmaleroy/Downloads/SLD_trans45/SLD_trans45.gdb",
+          layer = "CBG_Trans45")
+
+# convert to data frame
+ustransit <- as.data.frame(v)
+
+# filter by GEOID for state of california
+calitransit <- ustransit |>
+  filter(substr(GEOID10, 1, 2) == "06")|>
+  # mutate fields to match caliair
+  mutate(GEOID10abr = substr(as.character(GEOID10), 2, 11))
+
+# convert ctfips to string for join 
+caliairavg <- caliairavg |>
+  mutate(ctfips = as.character(ctfips))
+
+# join calitransit and caliair by census tract
+caliairtransit <- inner_join(calitransit, caliairavg, by = c("GEOID10abr" = "ctfips"))
+
+
+
+
+```
+
+```{r}
+# Join to demographic data from 2019 American Community Survey (census)
+
+# use census api to get information from CA 2019 (to match airqual data)
+ca_tracts_2019 <- get_acs(
+  geography = "tract",
+  state = "CA",
+  year = 2019,
+  survey = "acs5",
+  variables = c(
+    total_pop = "B01003_001",
+    median_income = "B19013_001",
+    median_age = "B01002_001",
+    poverty = "B17001_002"
+  ),
+  output = "wide"
+)
+```
+
+```{r}
+# clean ACS data for join
+ca_tracts_2019 <- ca_tracts_2019 |>
+  select(GEOID, NAME, total_popE, median_incomeE, median_ageE, povertyE) |>
+  mutate(GEOID10abr = substr(as.character(GEOID), 2, 11))
+
+# join census demographics to transit and air quality data
+caliairtransit <- inner_join(caliairtransit, ca_tracts_2019, by = "GEOID10abr") 
+
+# remove some duplicate columns
+caliairtransit <- caliairtransit |>
+  select (-GEOID.x, -NAME.x)
+
+# write final dataframe to csv
+write_csv(caliairtransit, "caliairtransit.csv")
+  
+```
