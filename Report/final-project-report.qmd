@@ -24,6 +24,18 @@ library(tidyverse)
 
 # Data
 
+```{r}
+calidata <- read.csv("caliairtransit.csv")
+
+# Clean data a little more
+calidata <- calidata |>
+  select(-Pct_LoWgWrk_byTr_av, -Pct_LoWgWrk_byTr_max, -Pct_Jobs_byTr_max, -Pct_Jobs_byTr_min, -DS_PM_stdd_avg, -GEOID.x,-NAME.x)
+
+# filter out data for clustering 
+calidataclust <- calidata |>
+  select(-GEOID10, -GEOID10abr, -CBG_ID, -CBSA_Name)
+```
+
 <!-- What are the data? - What was the source of the data (who collected it, when, in what way, and why)? Provide appropriate citation. What kind of data was it? Is there a link to the data or some other way for the reader to follow up on your work? You need to reference your wrangling file here if you used one, in addition to providing these details. -->
 
 # Methods
