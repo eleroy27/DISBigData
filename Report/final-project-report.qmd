@@ -29,7 +29,8 @@ calidata <- read.csv("caliairtransit.csv")
 
 # Clean data a little more
 calidata <- calidata |>
-  select(-Pct_LoWgWrk_byTr_av, -Pct_LoWgWrk_byTr_max, -Pct_Jobs_byTr_max, -Pct_Jobs_byTr_min, -DS_PM_stdd_avg, -GEOID.x,-NAME.x)
+  select(-Pct_LoWgWrk_byTr_av, -Pct_LoWgWrk_byTr_max, -Pct_Jobs_byTr_max, -Pct_Jobs_byTr_min, -DS_PM_stdd_avg, -GEOID.x,-NAME.x) |>
+  drop_na()
 
 # filter out data for clustering 
 calidataclust <- calidata |>
@@ -39,6 +40,37 @@ calidataclust <- calidata |>
 <!-- What are the data? - What was the source of the data (who collected it, when, in what way, and why)? Provide appropriate citation. What kind of data was it? Is there a link to the data or some other way for the reader to follow up on your work? You need to reference your wrangling file here if you used one, in addition to providing these details. -->
 
 # Methods
+
+```{r}
+#| warning: false
+# setting seed for clustering analysis
+set.seed(231)
+
+# Use an elbow plot to determine the optimal number of clusters needed
+elbow_plot <- data.frame(clusters = 1:10,
+                         within_ss = rep(NA, 10))
+
+for (i in 1:10){
+  calidata_kmi_out <- calidataclust |>
+    kmeans(centers = i, nstart = 20)
+  
+  
+  elbow_plot$within_ss[i] <- calidata_kmi_out$tot.withinss
+}
+
+# Construct elbow plot
+ggplot(elbow_plot, aes(x = clusters, y = within_ss)) +
+  geom_point() + 
+  geom_line() +
+  scale_x_continuous(breaks = 1:10) +
+  labs(x = "Number of clusters (k)",
+       y = expression("Total W"[k]))
+```
+
+```{r}
+caliclustersfinal <- calidataclust |>
+kmeans(centers = 3, nstart = 20)
+```
 
 <!-- What methods did you use? In what way did you *go beyond*? - What new method/analysis, etc. did you explore? You will need to describe the way in which you *went beyond*. This should include references to new R packages for analysis, citations of textbooks, blogs, or external sources, etc. You don't need to give us a major expository review of your *beyond* topic (no derivations, proofs, or anything of the sort), but give the reader a sense of it (what is it and where would they use it), and references for where they could go explore it more. -->
 
