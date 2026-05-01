@@ -12,8 +12,16 @@ editor: visual
 
 library(kableExtra)
 library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(cluster)
+install.packages("corrr")
+library(corrr)
+install.packages("FactoMineR")
+library(FactoMineR)
+install.packages("factoextra")
+library(factoextra)
 
-# add other packages here
 ```
 
 # Introduction
@@ -68,8 +76,41 @@ ggplot(elbow_plot, aes(x = clusters, y = within_ss)) +
 ```
 
 ```{r}
+# normalize data
+calidataclustnorm <- calidataclust |>
+   scale()
+
+
+
+```
+
+```{r}
+# visualize corr matrix
+
+corr_matrix <- cor(calidataclustnorm)
+
+ggcorrplot(corr_matrix,
+           hc.order = TRUE,
+           type = "Lower",
+           lab = TRUE)
+```
+
+```{r}
+# run initial clustering
 caliclustersfinal <- calidataclust |>
-kmeans(centers = 3, nstart = 20)
+  # scale data to account for differences in units
+  scale()|>
+  kmeans(centers = 3, nstart = 20)
+
+# add cluster assignment to data frame
+calidata <- calidata |>
+  mutate(caliclustersfinal = factor(caliclustersfinal["cluster"]))
+
+```
+
+```{r}
+# Run PCA
+
 ```
 
 <!-- What methods did you use? In what way did you *go beyond*? - What new method/analysis, etc. did you explore? You will need to describe the way in which you *went beyond*. This should include references to new R packages for analysis, citations of textbooks, blogs, or external sources, etc. You don't need to give us a major expository review of your *beyond* topic (no derivations, proofs, or anything of the sort), but give the reader a sense of it (what is it and where would they use it), and references for where they could go explore it more. -->
