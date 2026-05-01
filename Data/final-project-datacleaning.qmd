@@ -110,11 +110,33 @@ ca_tracts_2019 <- ca_tracts_2019 |>
 # join census demographics to transit and air quality data
 caliairtransit <- inner_join(caliairtransit, ca_tracts_2019, by = "GEOID10abr") 
 
-# remove some duplicate columns
+# remove unnneeded columns
 caliairtransit <- caliairtransit |>
-  select (-GEOID.x, -NAME.x)
+  select(-Pop_byTr_min, -Pop_byTr_max, -Pop_byTr_av, -Pct_Pop_byTr_min, -Pct_Pop_byTr_max, -Pct_Pop_byTr_av, -HU_byTr, -HH_byTr, -Wrks_byTr_min, -Wrks_byTr_max, -Wrks_byTr_Av, -Pct_Wrks_byTr_min, -Pct_Wrks_byTr_max, -Pct_Wrks_byTr_av, -LoWgWrks_byTr_min, -LoWgWrks_byTr_max, -LoMeWgWrks_byTr_min, -LoMeWgWrks_byTr_max, -Pct_LoWgWrk_byTr_min, -Pct_LoMeWgWrk_byTr_av, -Pct_LoMeWgWrk_byTr_max, -Pct_LoMeWgWks_byTr_min, -Pct_LoMeWgWrk_byTr_av, -Pct_LoMeWgWrk_byTr_max, -Jobs_byTr_max, -Jobs_byTr_min, -Job_byTr_Av, -Pct_Jobs_byTr_av, -Pct_Pop_byTr_min, -Pct_Pop_byTr_max, -Shape_Length, -Shape_Area)
+
+
+  
+```
+
+```{r}
+
+# Final round of filtering to remove duplicates after joins
+caliairtransit <- caliairtransit |>
+  select(-GEOID.y, -NAME.y, -total_popE.y, -median_incomeE.y, -median_ageE.y, -povertyE.y) 
+
+
+```
+
+```{r}
+# drop rows that have null values for greater than 20% of fields to not affect clustering
+caliairtransit <- caliairtransit |>
+  mutate(across(where(is.character), ~ {
+    x <- trimws(.)
+    x[x == "NaN"] <- NA
+    x
+  })) |>
+  filter(rowMeans(is.na(across(everything()))) <= 0.2)
 
 # write final dataframe to csv
 write_csv(caliairtransit, "caliairtransit.csv")
-  
 ```
